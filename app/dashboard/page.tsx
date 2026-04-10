@@ -219,28 +219,40 @@ export default function DashboardPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="grid grid-cols-2 gap-4">
-                            <button className="group p-6 border-2 border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50/50 transition-smooth text-left">
+                            <button
+                                onClick={() => setShowIrrigationModal(true)}
+                                className="group p-6 border-2 border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50/50 transition-smooth text-left"
+                            >
                                 <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-smooth">
                                     <Droplets className="w-6 h-6 text-blue-600" />
                                 </div>
                                 <p className="text-sm font-semibold text-gray-900">Check Irrigation</p>
                                 <p className="text-xs text-gray-500 mt-1">Smart decisions</p>
                             </button>
-                            <button className="group p-6 border-2 border-gray-200 rounded-xl hover:border-green-300 hover:bg-green-50/50 transition-smooth text-left">
+                            <button
+                                onClick={() => setShowAnalyticsModal(true)}
+                                className="group p-6 border-2 border-gray-200 rounded-xl hover:border-green-300 hover:bg-green-50/50 transition-smooth text-left"
+                            >
                                 <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-smooth">
                                     <TrendingUp className="w-6 h-6 text-green-600" />
                                 </div>
                                 <p className="text-sm font-semibold text-gray-900">View Analytics</p>
                                 <p className="text-xs text-gray-500 mt-1">Performance data</p>
                             </button>
-                            <button className="group p-6 border-2 border-gray-200 rounded-xl hover:border-yellow-300 hover:bg-yellow-50/50 transition-smooth text-left">
+                            <button
+                                onClick={() => setShowLoanModal(true)}
+                                className="group p-6 border-2 border-gray-200 rounded-xl hover:border-yellow-300 hover:bg-yellow-50/50 transition-smooth text-left"
+                            >
                                 <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-smooth">
                                     <DollarSign className="w-6 h-6 text-yellow-600" />
                                 </div>
                                 <p className="text-sm font-semibold text-gray-900">Apply for Loan</p>
                                 <p className="text-xs text-gray-500 mt-1">Quick finance</p>
                             </button>
-                            <button className="group p-6 border-2 border-gray-200 rounded-xl hover:border-red-300 hover:bg-red-50/50 transition-smooth text-left">
+                            <button
+                                onClick={() => setShowAlertsModal(true)}
+                                className="group p-6 border-2 border-gray-200 rounded-xl hover:border-red-300 hover:bg-red-50/50 transition-smooth text-left"
+                            >
                                 <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-smooth">
                                     <AlertTriangle className="w-6 h-6 text-red-600" />
                                 </div>
@@ -251,6 +263,18 @@ export default function DashboardPage() {
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Quick Actions Modals */}
+            <QuickActionsModals
+                showIrrigationModal={showIrrigationModal}
+                setShowIrrigationModal={setShowIrrigationModal}
+                showAnalyticsModal={showAnalyticsModal}
+                setShowAnalyticsModal={setShowAnalyticsModal}
+                showLoanModal={showLoanModal}
+                setShowLoanModal={setShowLoanModal}
+                showAlertsModal={showAlertsModal}
+                setShowAlertsModal={setShowAlertsModal}
+            />
         </div>
     );
 }

@@ -97,8 +97,7 @@ export function getFarmingCalendar(): MonthlyTask[] {
             tasks: {
                 sowing: ['Wheat', 'Mustard', 'Chickpea', 'Lentil', 'Pea'],
                 maintenance: ['Irrigation in new crops', 'Weed control'],
-                harvesting: ['Rice', 'Maize', 'Cotton', 'Soybean'],
-                harvesting: ['Rice', 'Cotton', 'Vegetables'],
+                harvesting: ['Rice', 'Maize', 'Cotton', 'Soybean', 'Vegetables'],
                 preparation: ['Store harvested grains properly']
             }
         },
