@@ -1,0 +1,229 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  phone         String   @unique
+  name          String
+  password      String
+  language      String   @default("en")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  farms         Farm[]
+  loans         Loan[]
+  transactions  Transaction[]
+  alerts        Alert[]
+}
+
+model Farm {
+  id            String   @id @default(cuid())
+  userId        String
+  name          String
+  location      String
+  latitude      Float
+  longitude     Float
+  totalArea     Float
+  soilType      String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fields        Field[]
+  weatherData   WeatherData[]
+  
+  @@index([userId])
+}
+
+model Field {
+  id            String   @id @default(cuid())
+  farmId        String
+  name          String
+  area          Float
+  cropType      String?
+  plantingDate  DateTime?
+  harvestDate   DateTime?
+  status        String   @default("active")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  farm          Farm     @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  crops         Crop[]
+  soilData      SoilData[]
+  irrigationLogs IrrigationLog[]
+  
+  @@index([farmId])
+}
+
+model Crop {
+  id                String   @id @default(cuid())
+  fieldId           String
+  name              String
+  variety           String?
+  plantingDate      DateTime
+  expectedHarvest   DateTime
+  actualHarvest     DateTime?
+  status            String   @default("growing")
+  waterRequirement  Float
+  growthStage       String   @default("seedling")
+  health            String   @default("good")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  field             Field    @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  marketplaceListings MarketplaceListing[]
+  
+  @@index([fieldId])
+}
+
+model SoilData {
+  id            String   @id @default(cuid())
+  fieldId       String
+  moisture      Float
+  temperature   Float
+  ph            Float?
+  nitrogen      Float?
+  phosphorus    Float?
+  potassium     Float?
+  timestamp     DateTime @default(now())
+  
+  field         Field    @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  
+  @@index([fieldId, timestamp])
+}
+
+model WeatherData {
+  id            String   @id @default(cuid())
+  farmId        String
+  temperature   Float
+  humidity      Float
+  rainfall      Float
+  windSpeed     Float
+  pressure      Float?
+  condition     String
+  rainProbability Float?
+  forecast      Json?
+  timestamp     DateTime @default(now())
+  
+  farm          Farm     @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  
+  @@index([farmId, timestamp])
+}
+
+model IrrigationLog {
+  id                String   @id @default(cuid())
+  fieldId           String
+  decision          String
+  confidence        Float
+  waterAmount       Float?
+  waterSaved        Float?
+  reason            String
+  soilMoisture      Float
+  temperature       Float
+  humidity          Float
+  rainProbability   Float
+  executedAt        DateTime?
+  createdAt         DateTime @default(now())
+  
+  field             Field    @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  
+  @@index([fieldId, createdAt])
+}
+
+model Loan {
+  id                String   @id @default(cuid())
+  userId            String
+  amount            Float
+  interestRate      Float
+  tenure            Int
+  purpose           String
+  status            String   @default("pending")
+  approvedAt        DateTime?
+  disbursedAt       DateTime?
+  repaymentDate     DateTime?
+  repaidAt          DateTime?
+  repaidAmount      Float?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+model MarketplaceListing {
+  id            String   @id @default(cuid())
+  cropId        String
+  sellerId      String
+  quantity      Float
+  unit          String
+  pricePerUnit  Float
+  location      String
+  status        String   @default("active")
+  description   String?
+  images        String[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  crop          Crop     @relation(fields: [cropId], references: [id], onDelete: Cascade)
+  transactions  Transaction[]
+  
+  @@index([status, createdAt])
+}
+
+model MandiPrice {
+  id            String   @id @default(cuid())
+  commodity     String
+  market        String
+  state         String
+  district      String
+  minPrice      Float
+  maxPrice      Float
+  modalPrice    Float
+  date          DateTime
+  createdAt     DateTime @default(now())
+  
+  @@index([commodity, date])
+  @@index([market, date])
+}
+
+model Transaction {
+  id            String   @id @default(cuid())
+  listingId     String
+  buyerId       String
+  quantity      Float
+  totalAmount   Float
+  status        String   @default("pending")
+  paymentMethod String?
+  completedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  listing       MarketplaceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  buyer         User     @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  
+  @@index([buyerId])
+  @@index([listingId])
+}
+
+model Alert {
+  id            String   @id @default(cuid())
+  userId        String
+  type          String
+  severity      String
+  title         String
+  message       String
+  isRead        Boolean  @default(false)
+  metadata      Json?
+  createdAt     DateTime @default(now())
+  
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, isRead, createdAt])
+}
